@@ -16,6 +16,34 @@ import (
 	
 )
 
+func pow(b string) int {
+	var hashInt big.Int
+	var hash [32]byte
+
+	target := big.NewInt(1)
+	target.Lsh(target, uint(256-targetBits))
+
+	nonce := 0
+
+	// t1 := time.Now() // get current time
+	for nonce < maxNonce {
+		data := prepareData(nonce, b)
+
+		hash = sha256.Sum256(data)
+		// fmt.Printf("#%d = %x\r", nonce, hash)
+		hashInt.SetBytes(hash[:])
+
+		if hashInt.Cmp(target) == -1 {
+			// elapsed := time.Since(t1)
+			// fmt.Print("\nApp elapsed: ", elapsed)
+			break
+		} else {
+			nonce++
+		}
+	}
+
+	return nonce
+}
 
 func GenerateRandomBytes(n int) []byte {
 	
